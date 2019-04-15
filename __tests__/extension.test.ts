@@ -206,8 +206,6 @@ describe("Extension Unit Tests", async () => {
         createTreeView.mockReturnValue("testDisposable");
 
         existsSync.mockReturnValueOnce(true);
-        //existsSync.mockReturnValueOnce(true);
-        //existsSync.mockReturnValueOnce(false);
         readdirSync.mockReturnValueOnce(["firstFile", "secondFile"]);
         isFile.mockReturnValueOnce(true);
         readdirSync.mockReturnValueOnce(["thirdFile"]);
@@ -217,7 +215,6 @@ describe("Extension Unit Tests", async () => {
         rmdirSync.mockImplementationOnce(() => {
             throw Error;
         });
-        // parse.mockReturnValue({path: "lame"});
         load.mockImplementation(() => {
             return {
                 profile: "SampleProfile"
@@ -256,7 +253,6 @@ describe("Extension Unit Tests", async () => {
             dark: path.join(__dirname, "..", "..", "resources", "dark", "pattern.svg"),
             light: path.join(__dirname, "..", "..", "resources", "light", "pattern.svg")
         };
-        // expect(createBasicZosmfSession.mock.calls.length).toBe(2);
         expect(mkdirSync.mock.calls.length).toBe(1);
         expect(createTreeView.mock.calls.length).toBe(2);
         expect(createTreeView.mock.calls[0][0]).toBe("zowe.explorer");
@@ -281,7 +277,7 @@ describe("Extension Unit Tests", async () => {
                     getChildren: mockGetUSSChildren,
                 }
         });
-        expect(registerCommand.mock.calls.length).toBe(24);
+        expect(registerCommand.mock.calls.length).toBe(27);
         expect(registerCommand.mock.calls[0][0]).toBe("zowe.addSession");
         expect(registerCommand.mock.calls[0][1]).toBeInstanceOf(Function);
         expect(registerCommand.mock.calls[1][0]).toBe("zowe.addFavorite");
@@ -329,18 +325,16 @@ describe("Extension Unit Tests", async () => {
         expect(registerCommand.mock.calls[22][0]).toBe("zowe.uss.ZoweUSSNode.open");
         expect(registerCommand.mock.calls[22][1]).toBeInstanceOf(Function);
         expect(registerCommand.mock.calls[23][0]).toBe("zowe.uss.removeSession");
-        expect(registerCommand.mock.calls[23][1]).toBeInstanceOf(Function);               
+        expect(registerCommand.mock.calls[23][1]).toBeInstanceOf(Function);
+        expect(registerCommand.mock.calls[24][0]).toBe("zowe.uss.createFile");
+        expect(registerCommand.mock.calls[24][1]).toBeInstanceOf(Function);
+        expect(registerCommand.mock.calls[25][0]).toBe("zowe.uss.createFolder");
+        expect(registerCommand.mock.calls[25][1]).toBeInstanceOf(Function);
+        expect(registerCommand.mock.calls[26][0]).toBe("zowe.uss.deleteNode");
+        expect(registerCommand.mock.calls[26][1]).toBeInstanceOf(Function);
         expect(onDidSaveTextDocument.mock.calls.length).toBe(2);
         expect(existsSync.mock.calls.length).toBe(2);
         expect(existsSync.mock.calls[0][0]).toBe(extension.BRIGHTTEMPFOLDER);
-        // expect(readdirSync.mock.calls.length).toBe(1);
-        // expect(readdirSync.mock.calls[0][0]).toBe(extension.BRIGHTTEMPFOLDER);
-        // expect(unlinkSync.mock.calls.length).toBe(2);
-        // expect(unlinkSync.mock.calls[0][0]).toBe(path.join(extension.BRIGHTTEMPFOLDER + "/firstFile"));
-        // expect(unlinkSync.mock.calls[1][0]).toBe(path.join(extension.BRIGHTTEMPFOLDER + "/secondFile"));
-        // expect(rmdirSync.mock.calls.length).toBe(2);
-        // expect(rmdirSync.mock.calls[0][0]).toBe(extension.BRIGHTTEMPFOLDER);
-        // expect(parse.mock.calls.length).toBe(1);
         expect(showErrorMessage.mock.calls.length).toBe(2); // TODO should be 1
         expect(showErrorMessage.mock.calls[0][0]).toBe("Cannot read property 'initLogger' of undefined"); // TODO
         expect(showErrorMessage.mock.calls[1][0]).toBe("Favorites file corrupted: [test]: brtvs99.fail{fail}");
