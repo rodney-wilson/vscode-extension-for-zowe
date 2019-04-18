@@ -286,7 +286,7 @@ describe("Extension Unit Tests", async () => {
                     getChildren: mockGetUSSChildren,
                 }
         });
-        expect(registerCommand.mock.calls.length).toBe(24);
+        expect(registerCommand.mock.calls.length).toBe(27);
         expect(registerCommand.mock.calls[0][0]).toBe("zowe.addSession");
         expect(registerCommand.mock.calls[0][1]).toBeInstanceOf(Function);
         expect(registerCommand.mock.calls[1][0]).toBe("zowe.addFavorite");
@@ -1193,7 +1193,7 @@ describe("Extension Unit Tests", async () => {
         showInputBox.mockReset();
 
         const node = new ZoweUSSNode("node", vscode.TreeItemCollapsibleState.None, ussNode, null, null);
-        node.fullPath = "/u/test";
+        node.fullPath = "//u/test";
         node.contextValue = "uss_session";
 
         showInputBox.mockReturnValueOnce("/u/test");

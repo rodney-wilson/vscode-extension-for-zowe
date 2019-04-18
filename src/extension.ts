@@ -19,6 +19,7 @@ import { CliProfileManager, Logger } from "@brightside/imperative";
 import { DatasetTree } from "./DatasetTree";
 import { USSTree } from "./USSTree";
 import { ZoweUSSNode } from "./ZoweUSSNode";
+import * as ussActions from "./uss/ussNodeActions";
 
 // Globals
 export const BRIGHTTEMPFOLDER = path.join(__dirname, "..", "..", "resources", "temp");
@@ -111,6 +112,9 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("zowe.uss.fullPath", (node) => enterUSSPattern(node, ussFileProvider));
     vscode.commands.registerCommand("zowe.uss.ZoweUSSNode.open", (node) => openUSS(node));
     vscode.commands.registerCommand("zowe.uss.removeSession", async (node) => ussFileProvider.deleteSession(node));
+    vscode.commands.registerCommand("zowe.uss.createFile", async (node) => ussActions.createUSSNode(node, ussFileProvider, "file"));
+    vscode.commands.registerCommand("zowe.uss.createFolder", async (node) => ussActions.createUSSNode(node, ussFileProvider, "directory"));
+    vscode.commands.registerCommand("zowe.uss.deleteNode", async (node) => ussActions.deleteUSSNode(node, ussFileProvider, getUSSDocumentFilePath(node)));
 }
 
 /**
@@ -538,6 +542,7 @@ export async function enterUSSPattern(node: ZoweUSSNode, ussFileProvider: USSTre
     };
     // get user input
     remotepath = await vscode.window.showInputBox(options);
+    remotepath = ussActions.parseUSSPath(remotepath);
     if (!remotepath) {
         vscode.window.showInformationMessage("You must enter a path.");
         return;
