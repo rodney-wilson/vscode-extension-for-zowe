@@ -106,15 +106,27 @@ export async function activate(context: vscode.ExtensionContext) {
        }
     });
 
+    vscode.commands.registerCommand("zowe.uss.addFavorite", async (node) => ussFileProvider.addUSSFavorite(node));
     vscode.commands.registerCommand("zowe.uss.addSession", async () => addUSSSession(ussFileProvider));
-    vscode.commands.registerCommand("zowe.uss.refreshAll", () => refreshAllUSS(ussFileProvider));
-    vscode.commands.registerCommand("zowe.uss.refreshUSS", (node) => refreshUSS(node));
-    vscode.commands.registerCommand("zowe.uss.fullPath", (node) => enterUSSPattern(node, ussFileProvider));
-    vscode.commands.registerCommand("zowe.uss.ZoweUSSNode.open", (node) => openUSS(node));
-    vscode.commands.registerCommand("zowe.uss.removeSession", async (node) => ussFileProvider.deleteSession(node));
     vscode.commands.registerCommand("zowe.uss.createFile", async (node) => ussActions.createUSSNode(node, ussFileProvider, "file"));
     vscode.commands.registerCommand("zowe.uss.createFolder", async (node) => ussActions.createUSSNode(node, ussFileProvider, "directory"));
     vscode.commands.registerCommand("zowe.uss.deleteNode", async (node) => ussActions.deleteUSSNode(node, ussFileProvider, getUSSDocumentFilePath(node)));
+    vscode.commands.registerCommand("zowe.uss.fullPath", (node) => enterUSSPattern(node, ussFileProvider));
+    vscode.commands.registerCommand("zowe.uss.refreshAll", () => refreshAllUSS(ussFileProvider));
+    vscode.commands.registerCommand("zowe.uss.refreshUSS", (node) => refreshUSS(node));
+    vscode.commands.registerCommand("zowe.uss.removeSession", async (node) => ussFileProvider.deleteSession(node));
+    vscode.commands.registerCommand("zowe.uss.ZoweUSSNode.open", (node) => openUSS(node));
+    vscode.workspace.onDidChangeConfiguration(async (e) => {
+        if (e.affectsConfiguration("Zowe-USS-Persistent-Favorites")) {
+            const setting: any = { ...vscode.workspace.getConfiguration().get("Zowe-USS-Persistent-Favorites") };
+            if (!setting.peristence) {
+                setting.favorites = [];
+                await vscode.workspace.getConfiguration().update("Zowe-USS-Persistent-Favorites", setting, vscode.ConfigurationTarget.Global);
+            }
+        }
+    }
+
+    )
 }
 
 /**
