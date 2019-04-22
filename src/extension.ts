@@ -119,10 +119,10 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("zowe.uss.text", async (node) => changeFileType(node, false, ussFileProvider));
     vscode.workspace.onDidChangeConfiguration(async (e) => {
         if (e.affectsConfiguration("Zowe-USS-Persistent-Favorites")) {
-            const setting: any = { ...vscode.workspace.getConfiguration().get("Zowe-USS-Persistent-Favorites") };
-            if (!setting.peristence) {
-                setting.favorites = [];
-                await vscode.workspace.getConfiguration().update("Zowe-USS-Persistent-Favorites", setting, vscode.ConfigurationTarget.Global);
+            const ussSetting: any = { ...vscode.workspace.getConfiguration().get("Zowe-USS-Persistent-Favorites") };
+            if (!ussSetting.persistence) {
+                ussSetting.favorites = [];
+                await vscode.workspace.getConfiguration().update("Zowe-USS-Persistent-Favorites", ussSetting, vscode.ConfigurationTarget.Global);
             }
         }
     });

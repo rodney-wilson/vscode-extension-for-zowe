@@ -35,9 +35,15 @@ export class ZoweUSSNode extends vscode.TreeItem {
      * @param {ZoweUSSNode} mParent - The parent node
      * @param {Session} session
      * @param {String} parentPath - The file path of the parent on the server
+     *  @param {String} mProfileName - Profile to which the node belongs to
      */
-    constructor(public mLabel: string, public mCollapsibleState: vscode.TreeItemCollapsibleState,
-                public mParent: ZoweUSSNode, private session: Session, private parentPath: string, public binary = false) {
+    constructor(public mLabel: string,
+                public mCollapsibleState: vscode.TreeItemCollapsibleState,
+                public mParent: ZoweUSSNode,
+                private session: Session,
+                private parentPath: string,
+                public binary = false,
+                private mProfileName?: string) {
         super(mLabel, mCollapsibleState);
         if (mCollapsibleState !== vscode.TreeItemCollapsibleState.None) {
             this.contextValue = "directory";
@@ -46,8 +52,12 @@ export class ZoweUSSNode extends vscode.TreeItem {
         } else {
             this.contextValue = "textFile";
         }
-        if (parentPath)
-            this.fullPath = this.tooltip = parentPath+'/'+mLabel;
+        if (parentPath) {
+            this.fullPath = this.tooltip = parentPath + '/' + mLabel;
+        }
+        if (this.mParent && this.mParent.contextValue === 'favorite') {
+            this.label = "[" + mProfileName + "]: " + mLabel;
+        }
     }
 
     /**
@@ -65,15 +75,16 @@ export class ZoweUSSNode extends vscode.TreeItem {
             return this.children;
         }
 
-        if (!this.mLabel) {
-            vscode.window.showErrorMessage("Invalid node");
-            throw Error("Invalid node");
-        }
-
         // Check if node is a favorite
         let label = this.mLabel.trim();
         if (this.mLabel.startsWith("[")) {
             label = this.mLabel.substring(this.mLabel.indexOf(":") + 1).trim();
+        }
+        
+
+        if (!this.mLabel) {
+            vscode.window.showErrorMessage("Invalid node");
+            throw Error("Invalid node");
         }
 
         // Gets the directories from the fullPath and displays any thrown errors
