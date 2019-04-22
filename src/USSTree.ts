@@ -25,13 +25,17 @@ import { ZoweUSSNode } from "./ZoweUSSNode";
  */
 export class USSTree implements vscode.TreeDataProvider<ZoweUSSNode> {
     public mSessionNodes: ZoweUSSNode[];
+    public mFavoriteSession: ZoweUSSNode;
+    public mFavorites: ZoweUSSNode[] = [];
 
     // Event Emitters used to notify subscribers that the refresh event has fired
     public mOnDidChangeTreeData: vscode.EventEmitter<ZoweUSSNode | undefined> = new vscode.EventEmitter<ZoweUSSNode | undefined>();
     public readonly onDidChangeTreeData: vscode.Event<ZoweUSSNode | undefined> = this.mOnDidChangeTreeData.event;
 
     constructor() {
-        this.mSessionNodes = [];
+        this.mFavoriteSession = new ZoweUSSNode("Favorites", vscode.TreeItemCollapsibleState.Collapsed, null, null, null);
+        this.mFavoriteSession.contextValue = "favorite";
+        this.mSessionNodes = [this.mFavoriteSession];
     }
 
     /**
@@ -52,6 +56,9 @@ export class USSTree implements vscode.TreeDataProvider<ZoweUSSNode> {
      */
     public getChildren(element?: ZoweUSSNode): ZoweUSSNode[] | Promise<ZoweUSSNode[]> {
         if (element) {
+            if (element.contextValue === "favorite") {
+                return this.mFavorites;
+            }
             return element.getChildren();
         }
         return this.mSessionNodes;
@@ -112,5 +119,37 @@ export class USSTree implements vscode.TreeDataProvider<ZoweUSSNode> {
         // Removes deleted session from mSessionNodes
         this.mSessionNodes = this.mSessionNodes.filter((tempNode) => tempNode.label !== node.label);
         this.refresh();
+    }
+
+    /**
+     * Adds a node to the USS favorites list
+     *
+     * @param {ZoweUSSNode} node
+     */
+    public async addUSSFavorite(node: ZoweUSSNode) {
+        let temp: ZoweUSSNode;
+        temp = new ZoweUSSNode("[" + node.getSessionNode().mLabel + "]: " + node.label, node.collapsibleState,
+            this.mFavoriteSession, node.getSession(), "");
+
+        temp.contextValue += "f";
+
+        if (!this.mFavorites.find((tempNode) =>
+            (tempNode.mLabel === temp.mLabel) && (tempNode.contextValue === temp.contextValue)
+        )) {
+        this.mFavorites.push(temp);
+        this.refresh();
+        await this.updateFavorites();
+        }
+    }
+
+    public async updateFavorites() {
+        const settings: any = { ...vscode.workspace.getConfiguration().get("Zowe-USS-Persistent-Favorites")};
+        if (settings.persistence) {
+            settings.favorites = this.mFavorites.map((fav) =>
+                fav.mLabel + "{" + fav.contextValue.slice(0, -1) + "}"
+            );
+            await vscode.workspace.getConfiguration().update("Zowe-USS-Persistent-Favorites", settings, vscode.ConfigurationTarget.Global);
+        }
+        console.log(settings);
     }
 }

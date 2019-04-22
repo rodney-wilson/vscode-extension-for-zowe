@@ -60,6 +60,10 @@
         "title": "Add Favorite"
       },
       {
+        "command": "zowe.uss.addFavorite",
+        "title": "Add Favorite"
+      },
+      {
         "command": "zowe.addSession",
         "title": "Zowe: Add Profile",
         "icon": {
@@ -247,6 +251,11 @@
         {
           "when": "view == zowe.uss.explorer && viewItem == binaryFile",
           "command": "zowe.uss.text",
+          "group": "navigation"
+        },
+        {
+          "when": "view == zowe.uss.explorer",
+          "command": "zowe.uss.addFavorite",
           "group": "navigation"
         },
         {
@@ -515,6 +524,14 @@
             "favorites": []
           },
           "description": "Toggle if favorite files persist locally",
+          "scope": "window"
+        },
+        "Zowe-USS-Persistent-Favorites": {
+          "default": {
+            "persistence": true,
+            "favorites": []
+          },
+          "description": "Toggle is favorite files exist locally",
           "scope": "window"
         }
       }
