@@ -35,7 +35,7 @@ export class ZoweUSSNode extends vscode.TreeItem {
      * @param {ZoweUSSNode} mParent - The parent node
      * @param {Session} session
      * @param {String} parentPath - The file path of the parent on the server
-     *  @param {String} mProfileName - Profile to which the node belongs to
+     * @param {String} mProfileName - Profile to which the node belongs to
      */
     constructor(public mLabel: string,
                 public mCollapsibleState: vscode.TreeItemCollapsibleState,
@@ -74,13 +74,6 @@ export class ZoweUSSNode extends vscode.TreeItem {
         if (!this.dirty) {
             return this.children;
         }
-
-        // Check if node is a favorite
-        let label = this.mLabel.trim();
-        if (this.mLabel.startsWith("[")) {
-            label = this.mLabel.substring(this.mLabel.indexOf(":") + 1).trim();
-        }
-        
 
         if (!this.mLabel) {
             vscode.window.showErrorMessage("Invalid node");

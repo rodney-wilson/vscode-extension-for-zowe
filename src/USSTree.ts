@@ -33,6 +33,7 @@ export class USSTree implements vscode.TreeDataProvider<ZoweUSSNode> {
     public readonly onDidChangeTreeData: vscode.Event<ZoweUSSNode | undefined> = this.mOnDidChangeTreeData.event;
 
     constructor() {
+        this.mSessionNodes = [];
         this.mFavoriteSession = new ZoweUSSNode("Favorites", vscode.TreeItemCollapsibleState.Collapsed, null, null, null);
         this.mFavoriteSession.contextValue = "favorite";
         this.mSessionNodes = [this.mFavoriteSession];

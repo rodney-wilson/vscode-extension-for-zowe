@@ -14,7 +14,7 @@ import { ZoweUSSNode } from "../ZoweUSSNode";
 import * as vscode from "vscode";
 import * as zowe from "@brightside/core";
 import * as fs from "fs";
-
+import * as utils from "../utils";
 /**
  * Prompts the user for a path, and populates the [TreeView]{@link vscode.TreeView} based on the path
  *
@@ -70,4 +70,23 @@ export async function deleteFromDisk(node: ZoweUSSNode, filePath: string) {
             }
         }
         catch (err) {}
+}
+
+export async function initializeUSSFavorites(ussFileProvider: USSTree) {
+    const lines: string[] = vscode.workspace.getConfiguration("Zowe-USS-Persistent-Favorites").get("favorites");
+    lines.forEach(async line => {
+        const profileName = line.substring(1, line.lastIndexOf("]"));
+        const nodeName = line.substring(line.indexOf(":") + 1, line.length);
+        const session = await utils.getSession(profileName);
+        const node = new ZoweUSSNode(
+            nodeName,
+            vscode.TreeItemCollapsibleState.Collapsed,
+            ussFileProvider.mFavoriteSession,
+            session,
+            "",
+            false,
+            profileName
+        );
+        ussFileProvider.mFavorites.push(node);
+    });
 }
