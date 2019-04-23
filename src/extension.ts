@@ -64,6 +64,7 @@ export async function activate(context: vscode.ExtensionContext) {
     }
 
     await initializeFavorites(datasetProvider);
+    await ussActions.initializeUSSFavorites(ussFileProvider);
 
     // Attaches the TreeView as a subscriber to the refresh event of datasetProvider
     const disposable1 = vscode.window.createTreeView("zowe.explorer", {treeDataProvider: datasetProvider});
