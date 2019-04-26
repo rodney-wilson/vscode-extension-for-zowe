@@ -23,7 +23,7 @@ import * as utils from "../utils";
  * @returns {Promise<void>}
  */
 export async function createUSSNode(node: ZoweUSSNode, ussFileProvider: USSTree, nodeType: string) {
-    const name = await vscode.window.showInputBox({placeHolder: "Name of Member"});
+    const name = await vscode.window.showInputBox({placeHolder: "Name of file or directory"});
     if (name) {
         try {
             const filePath = `${node.fullPath}/${name}`;
@@ -37,7 +37,8 @@ export async function createUSSNode(node: ZoweUSSNode, ussFileProvider: USSTree,
 }
 
 export async function deleteUSSNode(node: ZoweUSSNode, ussFileProvider: USSTree, filePath: string) {
-    const nodePath = node.fullPath;
+    // handle zosmf api issue with file paths
+    const nodePath = node.fullPath.startsWith("/") ?  node.fullPath.substring(1) :  node.fullPath;
     const quickPickOptions: vscode.QuickPickOptions = {
         placeHolder: `Are you sure you want to delete ${node.label}`,
         ignoreFocusOut: true,
@@ -55,13 +56,6 @@ export async function deleteUSSNode(node: ZoweUSSNode, ussFileProvider: USSTree,
         vscode.window.showErrorMessage(`Unable to delete node: ${err.message}`);
         throw (err);
     }
-}
-
-export function parseUSSPath(path: string) {
-    if (path && path.match('^\/[^\/]')) {
-        return `/${path}`;
-    }
-    return path;
 }
 
 /**
@@ -90,6 +84,7 @@ export async function initializeUSSFavorites(ussFileProvider: USSTree) {
             ussFileProvider.mFavoriteSession,
             session,
             "",
+            false,
             profileName
         );
         ussFileProvider.mFavorites.push(node);

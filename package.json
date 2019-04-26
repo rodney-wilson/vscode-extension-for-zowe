@@ -2,7 +2,7 @@
   "name": "vscode-extension-for-zowe",
   "displayName": "Zowe",
   "description": "VS Code extension, powered by Zowe CLI, that streamlines interaction with mainframe data sets",
-  "version": "0.10.2",
+  "version": "0.11.0",
   "publisher": "Zowe",
   "repository": {
     "url": "https://github.com/zowe/vscode-extension-for-zowe"
@@ -194,6 +194,14 @@
       {
         "command": "zowe.uss.removeSession",
         "title": "Remove Profile"
+      },
+      {
+        "command": "zowe.uss.binary",
+        "title": "Toggle Binary"
+      },
+      {
+        "command": "zowe.uss.text",
+        "title": "Toggle Text"
       }
     ],
     "menus": {
@@ -241,8 +249,13 @@
           "group": "navigation"
         },
         {
-          "when": "view == zowe.uss.explorer && viewItem == file",
-          "command": "zowe.uss.addFavorite",
+          "when": "view == zowe.uss.explorer && viewItem == textFile",
+          "command": "zowe.uss.binary",
+          "group": "navigation"
+        },
+        {
+          "when": "view == zowe.uss.explorer && viewItem == binaryFile",
+          "command": "zowe.uss.text",
           "group": "navigation"
         },
         {
